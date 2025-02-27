@@ -1,0 +1,3 @@
+C:/Users/hatef/NeuralNetworksCPP/cmake-build-debug/CMakeFiles/ReadASingleFile.dir
+C:/Users/hatef/NeuralNetworksCPP/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/hatef/NeuralNetworksCPP/cmake-build-debug/CMakeFiles/rebuild_cache.dir
