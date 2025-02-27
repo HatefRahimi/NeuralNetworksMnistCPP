@@ -61,17 +61,42 @@ void printMNISTImage(const std::vector<std::vector<double>>& image) {
 }
 
 int main() {
-    // Updated paths to reflect your project structure
-    std::string image_file = "C:\\Users\\hatef\\TestGround\\single-image.idx3-ubyte";
-    std::string label_file = "C:\\Users\\hatef\\TestGround\\single-label.idx1-ubyte";
+    // // Updated paths to reflect your project structure
+    // std::string image_file = "C:\\Users\\hatef\\TestGround\\single-image.idx3-ubyte";
+    // std::string label_file = "C:\\Users\\hatef\\TestGround\\single-label.idx1-ubyte";
+    //
+    // // Read image and label
+    // std::vector<std::vector<double>> image = readMNISTImage(image_file);
+    // int label = readMNISTLabel(label_file);
+    //
+    // // Print label and image
+    // std::cout << "\nLabel: " << label << std::endl;
+    // printMNISTImage(image);
+    //
+    // return 0;
+    std::string label_file = R"(C:\Users\hatef\TestGround\single-label.idx3-ubyte)";
 
-    // Read image and label
-    std::vector<std::vector<double>> image = readMNISTImage(image_file);
-    int label = readMNISTLabel(label_file);
+    // Declare file stream
+    std::ifstream file;
 
-    // Print label and image
-    std::cout << "\nLabel: " << label << std::endl;
-    printMNISTImage(image);
+    // Explicitly open the file in binary mode
+    file.open(label_file, std::ios::binary);
+
+    // Check if the file opened successfully
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open label file!" << std::endl;
+        return 1;
+    }
+
+    file.ignore(8); // Skip the 8-byte header
+
+    unsigned char label = 0;
+    file.read(reinterpret_cast<char*>(&label), 1); // Read 1 byte
+
+    file.close(); // Explicitly close the file
+
+    // Print the label
+    std::cout << "Label: " << static_cast<int>(label) << std::endl;
 
     return 0;
 }
