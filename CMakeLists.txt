@@ -11,4 +11,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(src)
 
 # Add executable for your main file
-add_executable(ReadASingleFile src/ReadASingleFile.cpp)
+add_executable(ReadASingleFile src/test_single_image.cpp
+        src/test_single_label.cpp
+)
