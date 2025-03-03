@@ -13,4 +13,6 @@ include_directories(src)
 # Add executable for your main file
 add_executable(ReadASingleFile src/test_single_image.cpp
         src/test_single_label.cpp
+        src/test_data.cpp
+        src/data.hpp
 )
