@@ -15,4 +15,6 @@ add_executable(ReadASingleFile src/test_single_image.cpp
         src/test_single_label.cpp
         src/test_data.cpp
         src/data.hpp
+        src/test_labels.cpp
+        src/labels.hpp
 )
