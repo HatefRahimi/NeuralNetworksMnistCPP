@@ -12,6 +12,12 @@ class DataSetLabels {
 private:
     size_t batch_size_;
     size_t number_of_labels_;
+
+    // The vector 'batches_' is a vector of matrices
+    // Each matrix in 'batches_' represents a batch of labels
+    // Each matrix has 'batch_size' rows and 10 columns
+    // Each row is a one-hot encoded vector of a label
+    // Each column corresponds to a digit from 0 to 9
     std::vector<MatrixXd> batches_;
 
 public:
@@ -24,9 +30,9 @@ public:
 };
 
 void DataSetLabels::readLabelData(const std::string& input_filepath) {
-    std::ifstream input_file(input_filepath, std::ios::binary);
+    ifstream input_file(input_filepath, std::ios::binary);
     if (!input_file.is_open()) {
-        std::cerr << "Unable to open file: " << input_filepath << std::endl;
+        cerr << "Unable to open file: " << input_filepath << endl;
         return;
     }
 
@@ -35,12 +41,12 @@ void DataSetLabels::readLabelData(const std::string& input_filepath) {
     int number_of_labels = 0;
 
     input_file.read(bin_data, 4);
-    std::reverse(bin_data, bin_data + 4);
-    std::memcpy(&magic_number, bin_data, sizeof(int));
+    reverse(bin_data, bin_data + 4);
+    memcpy(&magic_number, bin_data, sizeof(int));
 
     input_file.read(bin_data, 4);
-    std::reverse(bin_data, bin_data + 4);
-    std::memcpy(&number_of_labels, bin_data, sizeof(int));
+    reverse(bin_data, bin_data + 4);
+    memcpy(&number_of_labels, bin_data, sizeof(int));
     number_of_labels_ = number_of_labels;
 
     Eigen::MatrixXd label_matrix(batch_size_, 10);
@@ -49,7 +55,7 @@ void DataSetLabels::readLabelData(const std::string& input_filepath) {
     for (size_t i = 0; i < number_of_labels_; ++i) {
         uint8_t byte = 0;
         input_file.read(reinterpret_cast<char*>(&byte), sizeof(byte));
-        int label = static_cast<int>(byte);
+        int label = byte;
 
         label_matrix(i % batch_size_, label) = 1;
 
@@ -64,19 +70,19 @@ void DataSetLabels::readLabelData(const std::string& input_filepath) {
     }
 
     input_file.close();
-    std::cout << "Read " << number_of_labels_ << " labels into " << batches_.size() << " batches." << std::endl;
+    cout << "Read " << number_of_labels_ << " labels into " << batches_.size() << " batches." << endl;
 }
 
 void DataSetLabels::writeAllLabelsToFile(const std::string& output_filepath) {
-    std::ofstream output_file(output_filepath);
+    ofstream output_file(output_filepath);
     if (!output_file.is_open()) {
-        std::cerr << "Unable to open file: " << output_filepath << std::endl;
+        cerr << "Unable to open file: " << output_filepath << endl;
         return;
     }
 
     for (size_t batch_no = 0; batch_no < batches_.size(); ++batch_no) {
         for (size_t row = 0; row < batch_size_; ++row) {
-            std::vector<int> one_hot_vector;
+            vector<int> one_hot_vector;
             for (size_t col = 0; col < 10; ++col) {
                 int value = static_cast<int>(batches_[batch_no](row, col));
                 one_hot_vector.push_back(value);
@@ -92,14 +98,14 @@ void DataSetLabels::writeAllLabelsToFile(const std::string& output_filepath) {
         }
     }
     output_file.close();
-    std::cout << "One-hot encoded labels written to " << output_filepath << std::endl;
+    cout << "One-hot encoded labels written to " << output_filepath << std::endl;
 }
 
 void DataSetLabels::printFirstBatch() const {
     if (batches_.empty()) {
-        std::cout << "No batches available." << std::endl;
+        std::cout << "No batches available." << endl;
         return;
     }
-    std::cout << "First batch of labels (One-Hot Encoded):" << std::endl;
-    std::cout << batches_[0] << std::endl;
+    cout << "First batch of labels (One-Hot Encoded):" << endl;
+    cout << batches_[0] << endl;
 }

@@ -14,24 +14,24 @@ private:
     size_t number_of_images_;
     size_t number_of_rows_;
     size_t number_of_columns_;
-    std::vector<MatrixXd> batches_;
+    vector<MatrixXd> batches_;
 
 public:
     DataSetImages(size_t batch_size) : batch_size_(batch_size) {}
     ~DataSetImages() {}
 
-    void readImageData(const std::string& input_filepath);
-    void writeImageToFile(const std::string& output_filepath, const size_t& index);
+    void readImageData(const string& input_filepath);
+    void writeImageToFile(const string& output_filepath, const size_t& index);
     void printImageToConsole(const size_t& index);
     size_t getBatchSize();
 
 
 };
 
-void DataSetImages::readImageData(const std::string& input_filepath) {
-    std::ifstream input_file(input_filepath, std::ios::binary);
+void DataSetImages::readImageData(const string& input_filepath) {
+    ifstream input_file(input_filepath, ios::binary);
     if (!input_file.is_open()) {
-        std::cerr << "Unable to open file: " << input_filepath << std::endl;
+        cerr << "Unable to open file: " << input_filepath << endl;
         return;
     }
 
@@ -42,22 +42,22 @@ void DataSetImages::readImageData(const std::string& input_filepath) {
     int number_of_columns = 0;
 
     input_file.read(bin_data, 4);
-    std::reverse(bin_data, end(bin_data));
-    std::memcpy(&magic_number, bin_data, sizeof(int));
+    reverse(bin_data, end(bin_data));
+    memcpy(&magic_number, bin_data, sizeof(int));
 
     input_file.read(bin_data, 4);
-    std::reverse(bin_data, end(bin_data));
-    std::memcpy(&number_of_images, bin_data, sizeof(int));
+    reverse(bin_data, end(bin_data));
+    memcpy(&number_of_images, bin_data, sizeof(int));
     number_of_images_ = number_of_images;
 
     input_file.read(bin_data, 4);
-    std::reverse(bin_data, end(bin_data));
-    std::memcpy(&number_of_rows, bin_data, sizeof(int));
+    reverse(bin_data, end(bin_data));
+    memcpy(&number_of_rows, bin_data, sizeof(int));
     number_of_rows_ = number_of_rows;
 
     input_file.read(bin_data, 4);
-    std::reverse(bin_data, end(bin_data));
-    std::memcpy(&number_of_columns, bin_data, sizeof(int));
+    reverse(bin_data, end(bin_data));
+    memcpy(&number_of_columns, bin_data, sizeof(int));
     number_of_columns_ = number_of_columns;
 
     size_t image_size = number_of_rows_ * number_of_columns_;
@@ -82,10 +82,10 @@ void DataSetImages::readImageData(const std::string& input_filepath) {
     input_file.close();
 }
 
-void DataSetImages::writeImageToFile(const std::string& output_filepath, const size_t& index) {
+void DataSetImages::writeImageToFile(const string& output_filepath, const size_t& index) {
     size_t batch_no = index / batch_size_;
     size_t image_index = index % batch_size_;
-    std::ofstream output_file(output_filepath);
+    ofstream output_file(output_filepath);
 
     if (output_file.is_open()) {
         output_file << "MNIST Image Representation (Binary 1s and 0s):\n";
@@ -97,8 +97,8 @@ void DataSetImages::writeImageToFile(const std::string& output_filepath, const s
             output_file << std::endl;
         }
         output_file.close();
-        std::cout << "Image data written to " << output_filepath << " in grid format." << std::endl;
+        cout << "Image data written to " << output_filepath << " in grid format." << std::endl;
     }
     else
-        std::cerr << "Error: Unable to open file for writing: " << output_filepath << std::endl;
+        cerr << "Error: Unable to open file for writing: " << output_filepath << std::endl;
     }
