@@ -22,11 +22,16 @@ public:
 
     void readImageData(const string& input_filepath);
     void writeImageToFile(const string& output_filepath, const size_t& index);
-    void printImageToConsole(const size_t& index);
     size_t getBatchSize();
 
 
 };
+
+size_t DataSetImages::getBatchSize() {
+
+    return batches_.size();
+}
+
 
 void DataSetImages::readImageData(const string& input_filepath) {
     ifstream input_file(input_filepath, ios::binary);
@@ -102,3 +107,4 @@ void DataSetImages::writeImageToFile(const string& output_filepath, const size_t
     else
         cerr << "Error: Unable to open file for writing: " << output_filepath << std::endl;
     }
+

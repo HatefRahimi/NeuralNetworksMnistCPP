@@ -18,16 +18,23 @@ private:
     // Each matrix has 'batch_size' rows and 10 columns
     // Each row is a one-hot encoded vector of a label
     // Each column corresponds to a digit from 0 to 9
-    std::vector<MatrixXd> batches_;
+    vector<MatrixXd> batches_;
 
 public:
     DataSetLabels(size_t batch_size) : batch_size_(batch_size) {}
     ~DataSetLabels() {}
 
-    void readLabelData(const std::string& input_filepath);
-    void writeAllLabelsToFile(const std::string& output_filepath);
+    void readLabelData(const string& input_filepath);
+    void writeAllLabelsToFile(const string& output_filepath);
     void printFirstBatch() const;
+    MatrixXd getBatch(const size_t& index);
 };
+
+MatrixXd DataSetLabels::getBatch(const size_t& index){
+
+    return batches_[index];
+}
+
 
 void DataSetLabels::readLabelData(const std::string& input_filepath) {
     ifstream input_file(input_filepath, std::ios::binary);
@@ -70,7 +77,6 @@ void DataSetLabels::readLabelData(const std::string& input_filepath) {
     }
 
     input_file.close();
-    cout << "Read " << number_of_labels_ << " labels into " << batches_.size() << " batches." << endl;
 }
 
 void DataSetLabels::writeAllLabelsToFile(const std::string& output_filepath) {
@@ -109,3 +115,4 @@ void DataSetLabels::printFirstBatch() const {
     cout << "First batch of labels (One-Hot Encoded):" << endl;
     cout << batches_[0] << endl;
 }
+
