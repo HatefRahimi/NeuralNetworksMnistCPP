@@ -18,6 +18,7 @@ private:
     // Each matrix has 'batch_size' rows and 10 columns
     // Each row is a one-hot encoded vector of a label
     // Each column corresponds to a digit from 0 to 9
+
     vector<MatrixXd> batches_;
 
 public:
@@ -28,11 +29,16 @@ public:
     void writeAllLabelsToFile(const string& output_filepath);
     void printFirstBatch() const;
     MatrixXd getBatch(const size_t& index);
+    size_t getBatchSize();
 };
 
 MatrixXd DataSetLabels::getBatch(const size_t& index){
 
     return batches_[index];
+}
+
+size_t DataSetLabels::getBatchSize() {
+    return batches_.size();
 }
 
 

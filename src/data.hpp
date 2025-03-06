@@ -22,16 +22,18 @@ public:
 
     void readImageData(const string& input_filepath);
     void writeImageToFile(const string& output_filepath, const size_t& index);
+    void writeImageAsTensorToFile(const std::string& output_filepath, const size_t& index);
     size_t getBatchSize();
-
-
+    MatrixXd getBatch(const size_t& index);
 };
 
 size_t DataSetImages::getBatchSize() {
-
     return batches_.size();
 }
 
+inline MatrixXd DataSetImages::getBatch(const size_t &index) {
+    return batches_[index];
+}
 
 void DataSetImages::readImageData(const string& input_filepath) {
     ifstream input_file(input_filepath, ios::binary);
@@ -69,6 +71,7 @@ void DataSetImages::readImageData(const string& input_filepath) {
     unsigned char* image_bin = new unsigned char[image_size];
     double* image = new double[image_size];
     MatrixXd image_matrix(batch_size_, image_size);
+    size_t remaining_images = number_of_images_ % batch_size_;
 
     for (size_t i = 0; i < number_of_images_; ++i) {
         input_file.read(reinterpret_cast<char*>(image_bin), image_size);
@@ -79,6 +82,9 @@ void DataSetImages::readImageData(const string& input_filepath) {
 
         if ((i + 1) % batch_size_ == 0) {
             batches_.push_back(image_matrix);
+        }
+        else if (i == number_of_images_ - 1) {
+            batches_.push_back(image_matrix.block(0, 0, remaining_images, image_size));
         }
     }
 
@@ -106,5 +112,26 @@ void DataSetImages::writeImageToFile(const string& output_filepath, const size_t
     }
     else
         cerr << "Error: Unable to open file for writing: " << output_filepath << std::endl;
-    }
+}
 
+void DataSetImages::writeImageAsTensorToFile(const std::string& output_filepath, const size_t& index) {
+    size_t batch_no = index / batch_size_;
+    size_t image_index = index % batch_size_;
+    std::ofstream output_file(output_filepath);
+
+    if (output_file.is_open()) {
+        output_file << 2 << "\n";
+        output_file << number_of_rows_ << "\n";
+        output_file << number_of_columns_ << "\n";
+
+        size_t image_size = number_of_rows_ * number_of_columns_;
+        for (size_t i = 0; i < image_size; ++i) {
+            output_file << batches_[batch_no](image_index, i) << "\n";
+        }
+        output_file.close();
+        cout << "Image data written to " << output_filepath << " in tensor format." << std::endl;
+    }
+    else {
+        cerr << "Error: Unable to open file for writing: " << output_filepath << std::endl;
+    }
+}
