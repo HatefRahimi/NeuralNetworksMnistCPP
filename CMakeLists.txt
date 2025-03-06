@@ -17,4 +17,5 @@ add_executable(ReadASingleFile src/test_single_image.cpp
         src/data.hpp
         src/test_labels.cpp
         src/labels.hpp
+        src/CrossEntropyLoss.hpp
 )
