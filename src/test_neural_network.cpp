@@ -1,19 +1,22 @@
 #include <iostream>
 #include "NeuralNetwork.hpp"
 
-int main() {
+int main(int argc, char **argv) {
     // Define hyperparameters
     size_t input_size = 784; // MNIST images are 28x28
-    size_t hidden_size = 500; // Number of neurons in the hidden layer
+    size_t hidden_size = stoi(argv[4]); // Number of neurons in the hidden layer
     size_t output_size = 10;  // 10 classes for digits 0-9
-    size_t num_epochs = 10000;    // Number of training epochs
-    double learning_rate = .001; // Learning rate for weight updates
-    size_t batch_size = 1;    // Size of each training batch
+    size_t num_epochs = stoi(argv[2]);    // Number of training epochs
+    double learning_rate = stod(argv[1]); // Learning rate for weight updates
+    size_t batch_size = stoi(argv[3]);    // Size of each training batch
 
     // Define file paths
-    std::string train_images_path = "C:\\Users\\hatef\\NeuralNetworksCPP\\mnist-datasets\\single-image.idx3-ubyte";
-    std::string train_labels_path = "C:\\Users\\hatef\\NeuralNetworksCPP\\mnist-datasets\\single-label.idx1-ubyte";
-    std::string log_file_path = "log_predictions.txt";
+    std::string train_images_path = argv[5];
+    std::string train_labels_path =argv[6];
+    std::string log_file_path = argv[9];
+
+    std::string test_images_path = argv[7];
+    std::string test_labels_path =argv[8];
 
     // Load datasets
     DataSetImages train_images(batch_size);
