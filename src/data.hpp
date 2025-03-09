@@ -31,7 +31,7 @@ size_t DataSetImages::getBatchSize() {
     return batches_.size();
 }
 
-inline MatrixXd DataSetImages::getBatch(const size_t &index) {
+MatrixXd DataSetImages::getBatch(const size_t &index) {
     return batches_[index];
 }
 
@@ -81,10 +81,10 @@ void DataSetImages::readImageData(const string& input_filepath) {
         image_matrix.row(i % batch_size_) = Eigen::Map<Eigen::VectorXd>(image, image_size);
 
         if ((i + 1) % batch_size_ == 0) {
-            batches_.push_back(image_matrix);
+            batches_.push_back(image_matrix.block(0,0,batch_size_, image_size));
         }
         else if (i == number_of_images_ - 1) {
-            batches_.push_back(image_matrix.block(0, 0, remaining_images, image_size));
+            batches_.push_back(image_matrix.block(0, 0, batch_size_, image_size));
         }
     }
 
@@ -93,28 +93,7 @@ void DataSetImages::readImageData(const string& input_filepath) {
     input_file.close();
 }
 
-void DataSetImages::writeImageToFile(const string& output_filepath, const size_t& index) {
-    size_t batch_no = index / batch_size_;
-    size_t image_index = index % batch_size_;
-    ofstream output_file(output_filepath);
-
-    if (output_file.is_open()) {
-        output_file << "MNIST Image Representation (Binary 1s and 0s):\n";
-        for (size_t i = 0; i < number_of_rows_; ++i) {
-            for (size_t j = 0; j < number_of_columns_; ++j) {
-                double pixel_value = batches_[batch_no](image_index, i * number_of_columns_ + j);
-                output_file << (pixel_value > 0.5 ? "1" : "0");
-            }
-            output_file << std::endl;
-        }
-        output_file.close();
-        cout << "Image data written to " << output_filepath << " in grid format." << std::endl;
-    }
-    else
-        cerr << "Error: Unable to open file for writing: " << output_filepath << std::endl;
-}
-
-void DataSetImages::writeImageAsTensorToFile(const std::string& output_filepath, const size_t& index) {
+void DataSetImages::writeImageToFile(const std::string& output_filepath, const size_t& index) {
     size_t batch_no = index / batch_size_;
     size_t image_index = index % batch_size_;
     std::ofstream output_file(output_filepath);

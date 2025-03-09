@@ -16,10 +16,9 @@ public:
     double forward(const Eigen::MatrixXd &inputTensor, const Eigen::MatrixXd &labelTensor) {
         predTensorCache = inputTensor;
 
-        Eigen::MatrixXd clipped_predicted = inputTensor.array().max(EPSILON).min(1 - EPSILON);
 
         // Calculate cross-entropy loss
-        double loss = -((labelTensor.array() * clipped_predicted.array().log()).sum());
+        double loss = -((labelTensor.array() * (inputTensor.array().log())).sum());
         return loss;
     }
 

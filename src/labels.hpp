@@ -68,7 +68,7 @@ void DataSetLabels::readLabelData(const std::string& input_filepath) {
     for (size_t i = 0; i < number_of_labels_; ++i) {
         uint8_t byte = 0;
         input_file.read(reinterpret_cast<char*>(&byte), sizeof(byte));
-        int label = byte;
+        int label =static_cast<int> (byte);
 
         label_matrix(i % batch_size_, label) = 1;
 
@@ -113,12 +113,4 @@ void DataSetLabels::writeAllLabelsToFile(const std::string& output_filepath) {
     cout << "One-hot encoded labels written to " << output_filepath << std::endl;
 }
 
-void DataSetLabels::printFirstBatch() const {
-    if (batches_.empty()) {
-        std::cout << "No batches available." << endl;
-        return;
-    }
-    cout << "First batch of labels (One-Hot Encoded):" << endl;
-    cout << batches_[0] << endl;
-}
 

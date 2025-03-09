@@ -1,47 +1,53 @@
-#pragma once
-
+#include "Eigen/Dense"
 #include <iostream>
-#include <Eigen/Dense>
 #include <random>
 
-class FullyConnectedLayer {
+class FullyConnected
+{
 private:
     Eigen::MatrixXd weights;
-    Eigen::VectorXd biases;
-    Eigen::MatrixXd inputCache;
+    size_t input_size;
+    size_t output_size;
+    double range = 1.0;
 
+    Eigen::MatrixXd input_tensor;
 
 public:
-    FullyConnectedLayer(int inputSize, int outputSize) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::normal_distribution<> d(0, std::sqrt(2.0 / inputSize));
-
-        weights = Eigen::MatrixXd(outputSize, inputSize).unaryExpr([&](double) { return d(gen); });
-        biases = Eigen::VectorXd::Zero(outputSize);
+    FullyConnected() {
     }
 
-    // Forward pass: Compute the output of the fully connected layer
-    Eigen::MatrixXd forward(const Eigen::MatrixXd& input) {
-        inputCache = input;
-        // Matrix multiplication with bias addition
-        Eigen::MatrixXd output = (input * weights.transpose()).rowwise() + biases.transpose();
+    ~FullyConnected() {}
+    FullyConnected(size_t in, size_t out) : input_size(in), output_size(out)
+    {
+
+        range = 1.0 / sqrt(input_size);
+        weights = Eigen::MatrixXd::Random(input_size+1, output_size);
+        weights = weights * range;
+    };
+
+    void setWeights(Eigen::MatrixXd w) {
+        // for testing purposes
+        weights = w;
+    }
+
+    Eigen::MatrixXd forward(Eigen::MatrixXd input) {
+
+        input_tensor = Eigen::MatrixXd(input.rows(), input.cols() + 1);
+        auto ones = Eigen::MatrixXd::Constant(input.rows(), 1,1.0);
+        input_tensor << input, ones;
+        Eigen::MatrixXd output= input_tensor*weights;
         return output;
     }
 
-    // Backward pass: Compute the gradients and return input gradient
-    Eigen::MatrixXd backward(const Eigen::MatrixXd& gradients, double learningRate = 0.01) {
-        // Calculate gradients with respect to weights and biases
-        Eigen::MatrixXd weightGradients = gradients.transpose() * inputCache;
-        Eigen::VectorXd biasGradients = gradients.colwise().sum();
+    Eigen::MatrixXd backward(Eigen::MatrixXd error_tensor, double learningRate = 0.001) {
 
-        // Calculate gradients with respect to input for backpropagation
-        Eigen::MatrixXd inputGradients = gradients * weights;
+        Eigen::MatrixXd gradient_weights(weights.rows(), weights.cols());
+        gradient_weights = input_tensor.transpose() * error_tensor;
+        weights -= learningRate * gradient_weights;
 
-        weights -= learningRate * weightGradients;
-        biases -= learningRate * biasGradients;
-
-        return inputGradients;
+        return error_tensor * weights.transpose();
     }
+
 };
+
 
