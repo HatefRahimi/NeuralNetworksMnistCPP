@@ -26,7 +26,8 @@ public:
     ~DataSetLabels() {}
 
     void readLabelData(const string& input_filepath);
-    void writeAllLabelsToFile(const string& output_filepath);
+    void writeAllLabelsToFileWithBrackets(const string& output_filepath);
+    void writeLabelToFile(const std::string &, const size_t &);
     void printFirstBatch() const;
     MatrixXd getBatch(const size_t& index);
     size_t getBatchSize();
@@ -85,7 +86,7 @@ void DataSetLabels::readLabelData(const std::string& input_filepath) {
     input_file.close();
 }
 
-void DataSetLabels::writeAllLabelsToFile(const std::string& output_filepath) {
+void DataSetLabels::writeAllLabelsToFileWithBrackets(const std::string& output_filepath) {
     ofstream output_file(output_filepath);
     if (!output_file.is_open()) {
         cerr << "Unable to open file: " << output_filepath << endl;
@@ -113,4 +114,37 @@ void DataSetLabels::writeAllLabelsToFile(const std::string& output_filepath) {
     cout << "One-hot encoded labels written to " << output_filepath << std::endl;
 }
 
+void DataSetLabels::writeLabelToFile(const std::string &output_filepath, const size_t &index)
+{
+    // Write in this format to be compatible with this format
+    // 1
+    // 10
+    // 0 if label is 0
+    // 1 if label is 1
+    // label 0, 1 should be written for respective digit entry
+    std::ofstream output_file(output_filepath, std::ios::binary);
+    if (output_file.is_open())
+    {
+
+        // Write the rank of the tensor to the file
+        output_file << 1 << "\n";
+
+        // Write the shape of the tensor to the file
+        output_file << 10 << "\n";
+
+        // Write the tensor elements to the file
+        size_t batch_no = index / batch_size_;
+        size_t image_index = index % batch_size_;
+        size_t image_size = 10;
+        for (size_t i = 0; i < image_size; ++i)
+        {
+            output_file << batches_[batch_no](image_index, i) << "\n";
+        }
+        output_file.close();
+    }
+    else
+    {
+        std::cout << "Unable to open file" << std::endl;
+    }
+}
 

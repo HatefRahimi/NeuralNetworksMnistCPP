@@ -82,7 +82,7 @@ public:
 
                 // Log predictions and labels
                 log_file << "Current batch: " << batch << std::endl;
-                for (size_t i = 0; i < output.rows(); ++i) {
+                for (int i = 0; i < output.rows(); ++i) {
                     // int predicted_label = (int)Eigen::VectorXd::Map(output.row(i).data(), output.cols()).maxCoeff();
                     Eigen::Index predictedLabel;
                     Eigen::Index actualLabel;

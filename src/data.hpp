@@ -22,7 +22,6 @@ public:
 
     void readImageData(const string& input_filepath);
     void writeImageToFile(const string& output_filepath, const size_t& index);
-    void writeImageAsTensorToFile(const std::string& output_filepath, const size_t& index);
     size_t getBatchSize();
     MatrixXd getBatch(const size_t& index);
 };

@@ -4,15 +4,15 @@
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    std::string input_filepath = argv[1];
+    std::string output_filepath = argv[2];
+    size_t index = std::stoi(argv[3]);
 
     DataSetLabels dataset_labels(5000);
-    dataset_labels.readLabelData("mnist-datasets/train-labels.idx1-ubyte");
-
-    dataset_labels.writeAllLabelsToFile("labels_out.txt");
-    cout << "Image and label data loaded successfully." << endl;
-
-    cout << dataset_labels.getBatch(0);
+    dataset_labels.readLabelData(input_filepath);
+    dataset_labels.writeLabelToFile(output_filepath, index);
 
     return 0;
 }

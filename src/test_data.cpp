@@ -3,10 +3,15 @@
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    string input_filepath = argv[1];
+    string output_filepath = argv[2];
+    size_t index = stoi(argv[3]);
 
     DataSetImages dataset(5000); // Batch size
-    dataset.readImageData("mnist-datasets/train-images.idx3-ubyte");
-    dataset.writeImageToFile("image_out.txt", 0); // Write the first image to file
+    dataset.readImageData(input_filepath);
+    dataset.writeImageToFile(output_filepath, index); // Write the first image to file
+
     return 0;
 }
